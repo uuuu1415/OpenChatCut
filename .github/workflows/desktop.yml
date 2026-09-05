@@ -6,9 +6,6 @@
 name: desktop
 
 on:
-  push:
-    tags:
-      - 'v*'
   workflow_dispatch:
 
 permissions:
