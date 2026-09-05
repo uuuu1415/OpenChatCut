@@ -67,7 +67,7 @@ export function EditorWorkspaceView(props: EditorWorkspaceViewProps) {
   useWorkspaceDialogPrefetch();
   return (
     <div
-      className="cc-editor-shell"
+      className="cc-editor-shell cc-desktop-editor"
       style={{
         display: 'grid',
         gridTemplateColumns: props.gridTemplateColumns,

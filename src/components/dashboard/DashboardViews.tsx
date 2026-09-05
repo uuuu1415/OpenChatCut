@@ -23,7 +23,7 @@ import { relativeProjectTime, type DashboardModel, type DashboardProps } from '.
 function ModelSetupCard({ onOpen }: { onOpen: () => void }) {
   const t = useT();
   return (
-    <section role="status" style={modelSetupCard}>
+    <section className="cc-model-setup-card" role="status" style={modelSetupCard}>
       <span style={modelSetupIcon}><Icon name="sparkles" size={18} /></span>
       <span style={{ flex: 1, minWidth: 0 }}>
         <strong style={{ display: 'block', color: theme.textStrong, fontSize: 13.5 }}>{t('配置模型后开始使用 Agent')}</strong>
@@ -80,7 +80,7 @@ export function DashboardTitlebarContent({ model }: { model: DashboardModel }) {
 function ProjectToolbar({ projects, model }: { projects: ProjectMeta[]; model: DashboardModel }) {
   const t = useT();
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
+    <div className="cc-dashboard-toolbar" style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
       <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700, letterSpacing: '-0.02em' }}>{t('工程')}</h1>
       {model.transfer.note && <span style={{ color: theme.textDim, fontSize: 12, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{model.transfer.note}</span>}
       <span style={{ marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 10 }}>
@@ -142,13 +142,13 @@ function ProjectActions({ project, props, model }: { project: ProjectMeta; props
 function ProjectCard({ project, props, model }: { project: ProjectMeta; props: DashboardProps; model: DashboardModel }) {
   const t = useT();
   return (
-    <div style={card}>
-      <button onClick={() => props.onOpen(project.id)} style={thumb} title={t('打开 {name}', { name: project.name })}>
+    <div className="cc-dashboard-project-card" style={card}>
+      <button className="cc-dashboard-project-thumb" onClick={() => props.onOpen(project.id)} style={thumb} title={t('打开 {name}', { name: project.name })}>
         {model.thumbs[project.id]
           ? <img src={model.thumbs[project.id]} alt="" draggable={false} loading="lazy" decoding="async" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'contain', display: 'block' }} />
           : <span style={{ color: theme.borderLight, display: 'inline-flex' }}><Icon name="play" size={26} /></span>}
       </button>
-      <div style={{ padding: '9px 11px', display: 'flex', flexDirection: 'column', gap: 4 }}>
+      <div className="cc-dashboard-project-body" style={{ padding: '9px 11px', display: 'flex', flexDirection: 'column', gap: 4 }}>
         <ProjectName project={project} model={model} />
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <span style={{ fontSize: 11, color: theme.textDim, fontVariantNumeric: 'tabular-nums' }}>{relativeProjectTime(project.updatedAt, t)}</span>
@@ -163,8 +163,8 @@ function ProjectGrid({ props, model }: { props: DashboardProps; model: Dashboard
   const t = useT();
   return (
     <>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(232px, 1fr))', alignItems: 'start', gap: 16 }}>
-        <button onClick={props.onNew} style={newCard} title={t('新建工程')}>
+      <div className="cc-dashboard-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(232px, 1fr))', alignItems: 'start', gap: 16 }}>
+        <button className="cc-dashboard-new-card" onClick={props.onNew} style={newCard} title={t('新建工程')}>
           <span style={{ fontSize: 30, color: theme.textDim, lineHeight: 1 }}>＋</span>
           <span style={{ fontSize: 13, color: theme.textDim }}>{t('新建工程')}</span>
         </button>
@@ -179,8 +179,8 @@ function ProjectGrid({ props, model }: { props: DashboardProps; model: Dashboard
 
 export function DashboardContent({ props, model }: { props: DashboardProps; model: DashboardModel }) {
   return (
-    <main style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
-      <div style={{ maxWidth: 1120, margin: '0 auto', padding: '28px 24px 80px' }}>
+    <main className="cc-dashboard-main" style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
+      <div className="cc-dashboard-content" style={{ maxWidth: 1120, margin: '0 auto', padding: '28px 24px 80px' }}>
         <StorageMigrationBanner onOpenDialog={() => model.setDialog('storage', true)} />
         {model.modelSnapshot.loaded && model.modelSnapshot.choices.length === 0 && <ModelSetupCard onOpen={() => model.setDialog('settings', true)} />}
         <ProjectToolbar projects={props.projects} model={model} />

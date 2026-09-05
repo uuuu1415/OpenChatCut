@@ -1,0 +1,571 @@
+/*
+ * OpenChatCut desktop direction
+ * --------------------------------
+ * The original renderer already owns the editing behaviour. This layer is
+ * intentionally presentation-only: it gives the Electron surface a stronger
+ * hierarchy without bypassing the project store, Remotion player, Agent
+ * session, or timeline reducers.
+ */
+
+:root {
+  --oc-bg: color-mix(in srgb, var(--cc-bg, #0b0e12) 78%, #0b0e12);
+  --oc-surface: color-mix(in srgb, var(--cc-panel, #11151a) 78%, #11151a);
+  --oc-surface-raised: color-mix(in srgb, var(--cc-panel-alt, #171c22) 72%, #171c22);
+  --oc-surface-soft: color-mix(in srgb, var(--cc-hover, #1c232b) 72%, #1c232b);
+  --oc-surface-inset: color-mix(in srgb, var(--cc-inset, #0f1318) 78%, #0f1318);
+  --oc-line: color-mix(in srgb, var(--cc-border, rgba(222, 231, 239, 0.11)) 72%, rgba(222, 231, 239, 0.11));
+  --oc-line-strong: color-mix(in srgb, var(--cc-border-light, rgba(222, 231, 239, 0.18)) 72%, rgba(222, 231, 239, 0.18));
+  --oc-text: var(--cc-text, #f1f4f7);
+  --oc-text-muted: var(--cc-text-muted, #9aa5b1);
+  --oc-text-dim: var(--cc-text-dim, #687480);
+  --oc-coral: var(--cc-accent, #ff785d);
+  --oc-coral-soft: rgba(255, 120, 93, 0.14);
+  --oc-blue: #82b9ff;
+  --oc-green: #8bd8aa;
+  --oc-gold: #f4c56c;
+  --oc-shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
+}
+
+html,
+body,
+#root {
+  background: var(--oc-bg);
+  color: var(--oc-text);
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: Geist, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+button {
+  transition:
+    background-color 140ms ease,
+    border-color 140ms ease,
+    color 140ms ease,
+    box-shadow 140ms ease,
+    transform 140ms ease;
+}
+
+button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+/* Dashboard */
+
+.cc-dashboard-shell {
+  background:
+    radial-gradient(circle at 75% -15%, rgba(255, 120, 93, 0.1), transparent 30rem),
+    var(--oc-bg) !important;
+  color: var(--oc-text) !important;
+}
+
+.cc-dashboard-shell > .cc-window-titlebar {
+  height: 58px !important;
+  padding: 0 28px !important;
+  gap: 12px !important;
+  background: rgba(17, 21, 26, 0.94) !important;
+  border-bottom: 1px solid var(--oc-line) !important;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.025);
+  backdrop-filter: blur(18px);
+}
+
+.cc-dashboard-shell > .cc-window-titlebar .cc-header-btn {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 8px !important;
+  color: var(--oc-text-muted) !important;
+}
+
+.cc-dashboard-shell > .cc-window-titlebar .cc-header-btn:hover {
+  color: var(--oc-text) !important;
+  background: var(--oc-surface-soft) !important;
+}
+
+.cc-dashboard-shell > .cc-window-titlebar .cc-window-controls {
+  margin-right: 4px;
+}
+
+.cc-dashboard-main {
+  background: transparent !important;
+}
+
+.cc-dashboard-content {
+  max-width: 1260px !important;
+  padding: 36px 36px 84px !important;
+}
+
+.cc-dashboard-content > .cc-storage-migration-banner {
+  margin-bottom: 20px;
+  border-radius: 10px !important;
+}
+
+.cc-model-setup-card {
+  min-height: 74px;
+  padding: 16px 18px !important;
+  margin-bottom: 28px;
+  border: 1px solid var(--oc-line) !important;
+  border-radius: 12px !important;
+  background: linear-gradient(110deg, rgba(255, 120, 93, 0.1), var(--oc-surface)) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
+}
+
+.cc-model-setup-card button {
+  min-height: 34px;
+  padding: 0 14px !important;
+  border-radius: 8px !important;
+  background: var(--oc-coral) !important;
+  color: #21110d !important;
+  font-weight: 650;
+}
+
+.cc-dashboard-toolbar {
+  min-height: 42px;
+  margin-bottom: 22px !important;
+}
+
+.cc-dashboard-toolbar h1 {
+  font-size: 25px !important;
+  letter-spacing: -0.04em !important;
+  font-weight: 650 !important;
+}
+
+.cc-dashboard-toolbar > span:last-child {
+  gap: 10px !important;
+}
+
+.cc-dashboard-toolbar .cc-search-box,
+.cc-dashboard-toolbar input[type="search"] {
+  border-radius: 9px !important;
+}
+
+.cc-dashboard-grid {
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
+  gap: 18px !important;
+}
+
+.cc-dashboard-project-card {
+  overflow: hidden;
+  border: 1px solid var(--oc-line) !important;
+  border-radius: 13px !important;
+  background: var(--oc-surface) !important;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.14);
+  transition:
+    border-color 160ms ease,
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.cc-dashboard-project-card:hover {
+  border-color: var(--oc-line-strong) !important;
+  box-shadow: var(--oc-shadow);
+  transform: translateY(-2px);
+}
+
+.cc-dashboard-project-thumb {
+  min-height: 154px !important;
+  border-bottom: 1px solid var(--oc-line) !important;
+  background:
+    radial-gradient(circle at 70% 24%, rgba(255, 255, 255, 0.15), transparent 20%),
+    linear-gradient(135deg, #283644, #141b22 58%, #0d1116) !important;
+}
+
+.cc-dashboard-project-thumb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg, transparent 46%, rgba(255, 120, 93, 0.55) 46.5%, transparent 47%),
+    linear-gradient(155deg, transparent 55%, rgba(130, 185, 255, 0.32) 55.5%, transparent 56%);
+  opacity: 0.62;
+  pointer-events: none;
+}
+
+.cc-dashboard-project-thumb:hover .cc-thumb-play,
+.cc-dashboard-project-thumb:hover [class*="play"] {
+  transform: translate(-50%, -50%) scale(1.08);
+}
+
+.cc-dashboard-project-body {
+  min-height: 92px;
+  padding: 14px 15px 13px !important;
+  gap: 9px !important;
+}
+
+.cc-dashboard-project-card .acts {
+  opacity: 0;
+  transition: opacity 140ms ease;
+}
+
+.cc-dashboard-project-card:hover .acts,
+.cc-dashboard-project-card:focus-within .acts {
+  opacity: 1;
+}
+
+.cc-dashboard-project-card .progress-line {
+  height: 3px !important;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.cc-dashboard-project-card .progress-line > span {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--oc-coral) !important;
+}
+
+.cc-dashboard-new-card {
+  min-height: 248px !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  padding: 25px !important;
+  gap: 8px !important;
+  border: 1px dashed rgba(255, 120, 93, 0.36) !important;
+  border-radius: 13px !important;
+  background: linear-gradient(140deg, rgba(255, 120, 93, 0.09), rgba(17, 21, 26, 0.8)) !important;
+  color: var(--oc-text) !important;
+  text-align: left !important;
+}
+
+.cc-dashboard-new-card:hover {
+  border-color: var(--oc-coral) !important;
+  background: linear-gradient(140deg, rgba(255, 120, 93, 0.15), var(--oc-surface)) !important;
+}
+
+.cc-dashboard-new-card > span:first-child {
+  width: 42px;
+  height: 42px;
+  display: grid !important;
+  place-items: center;
+  margin-bottom: 12px;
+  border: 1px solid rgba(255, 120, 93, 0.4);
+  border-radius: 11px;
+  background: var(--oc-coral-soft);
+  color: var(--oc-coral) !important;
+}
+
+/* Editor shell */
+
+.cc-desktop-editor {
+  background: var(--oc-bg) !important;
+  color: var(--oc-text) !important;
+}
+
+.cc-desktop-editor > .cc-topbar {
+  height: 56px !important;
+  padding: 0 12px !important;
+  gap: 8px !important;
+  background: rgba(17, 21, 26, 0.96) !important;
+  border-bottom: 1px solid var(--oc-line) !important;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.025);
+  z-index: 20;
+}
+
+.cc-desktop-editor .cc-topbar-title {
+  font-size: 13px !important;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.cc-desktop-editor .cc-topbar-title > span {
+  padding: 7px 11px;
+  border: 1px solid var(--oc-line);
+  border-radius: 8px;
+  background: var(--oc-surface);
+}
+
+.cc-desktop-editor .cc-topbar-actions {
+  gap: 4px !important;
+}
+
+.cc-desktop-editor .cc-topbar-actions > button,
+.cc-desktop-editor .cc-topbar-actions > .cc-header-btn,
+.cc-desktop-editor .cc-topbar-actions > [role="button"] {
+  border-radius: 8px !important;
+}
+
+.cc-desktop-editor .cc-topbar-actions > button:last-of-type {
+  min-width: 72px !important;
+  height: 32px !important;
+  border-radius: 8px !important;
+  background: var(--oc-coral) !important;
+  color: #24120e !important;
+  font-weight: 700 !important;
+}
+
+.cc-desktop-editor .cc-chat-panel,
+.cc-desktop-editor .cc-library-panel,
+.cc-desktop-editor .cc-preview-workspace,
+.cc-desktop-editor .cc-inspector,
+.cc-desktop-editor .cc-timeline {
+  background: var(--oc-surface) !important;
+}
+
+.cc-desktop-editor .cc-chat-panel {
+  border-right: 1px solid var(--oc-line) !important;
+}
+
+.cc-desktop-editor .cc-chat-header {
+  min-height: 58px !important;
+  padding: 0 15px !important;
+  border-bottom: 1px solid var(--oc-line) !important;
+  background: var(--oc-surface) !important;
+}
+
+.cc-desktop-editor .cc-chat-brand-copy small {
+  color: var(--oc-text-dim) !important;
+  letter-spacing: 0.02em;
+}
+
+.cc-desktop-editor .cc-chat-messages {
+  padding: 17px 15px 20px !important;
+}
+
+.cc-desktop-editor .cc-chat-message {
+  margin-bottom: 15px !important;
+}
+
+.cc-desktop-editor .cc-chat-message-bubble,
+.cc-desktop-editor .cc-chat-message-content {
+  border-radius: 10px !important;
+}
+
+.cc-desktop-editor .cc-chat-composer,
+.cc-desktop-editor .cc-chat-composer-bar {
+  border: 1px solid var(--oc-line-strong) !important;
+  border-radius: 11px !important;
+  background: var(--oc-surface-raised) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.cc-desktop-editor .cc-chat-composer {
+  margin: 12px !important;
+}
+
+.cc-desktop-editor .cc-chat-composer textarea {
+  min-height: 58px !important;
+  padding: 12px !important;
+  color: var(--oc-text) !important;
+}
+
+.cc-desktop-editor .cc-chat-send-btn {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 8px !important;
+  background: var(--oc-coral) !important;
+  color: #24120e !important;
+}
+
+.cc-desktop-editor .cc-library-panel {
+  border-right: 1px solid var(--oc-line) !important;
+}
+
+.cc-desktop-editor .cc-library-panel button[aria-selected="true"],
+.cc-desktop-editor .cc-library-panel button.active {
+  border-radius: 8px !important;
+  background: var(--oc-coral-soft) !important;
+  color: var(--oc-text) !important;
+}
+
+.cc-desktop-editor .cc-preview-workspace {
+  border-left: 0 !important;
+}
+
+.cc-desktop-editor .cc-preview-header {
+  height: 42px !important;
+  padding: 0 15px !important;
+  border-bottom: 1px solid var(--oc-line) !important;
+  background: var(--oc-surface) !important;
+}
+
+.cc-desktop-editor .cc-preview-stage {
+  margin: 16px !important;
+  border: 1px solid var(--oc-line-strong) !important;
+  border-radius: 12px !important;
+  background: #090b0e !important;
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.32);
+}
+
+.cc-desktop-editor .cc-preview-canvas {
+  border-radius: 9px;
+  overflow: hidden;
+}
+
+.cc-desktop-editor .cc-preview-empty {
+  border: 1px dashed var(--oc-line-strong) !important;
+  border-radius: 10px !important;
+  background: var(--oc-surface-inset) !important;
+  color: var(--oc-text-muted) !important;
+}
+
+.cc-desktop-editor .cc-inspector {
+  border-left: 1px solid var(--oc-line) !important;
+}
+
+.cc-desktop-editor .cc-insp-header {
+  min-height: 58px !important;
+  padding: 10px 14px !important;
+  border-bottom: 1px solid var(--oc-line) !important;
+  background: var(--oc-surface) !important;
+}
+
+.cc-desktop-editor .cc-insp-tabs {
+  padding: 0 12px !important;
+  background: var(--oc-surface) !important;
+}
+
+.cc-desktop-editor .cc-insp-tabs button.active {
+  border-bottom-width: 2px !important;
+  border-bottom-color: var(--oc-coral) !important;
+  color: var(--oc-text) !important;
+}
+
+.cc-desktop-editor .cc-insp-body {
+  padding: 13px 14px 22px !important;
+}
+
+.cc-desktop-editor .cc-insp-section {
+  margin-top: 15px !important;
+  padding-top: 12px !important;
+  border-top: 1px solid var(--oc-line) !important;
+}
+
+/* Timeline: clear track hierarchy and make the playhead a visual anchor. */
+
+.cc-desktop-editor .cc-timeline {
+  border-left: 1px solid var(--oc-line) !important;
+  border-top: 1px solid var(--oc-line) !important;
+}
+
+.cc-desktop-editor .cc-timeline-toolbar {
+  min-height: 44px !important;
+  padding: 0 12px !important;
+  border-bottom: 1px solid var(--oc-line) !important;
+  background: var(--oc-surface-raised) !important;
+}
+
+.cc-desktop-editor .cc-timeline-tool-group {
+  gap: 4px !important;
+}
+
+.cc-desktop-editor .cc-timeline-toolbar button,
+.cc-desktop-editor .cc-timeline-toolbar summary {
+  width: 30px !important;
+  height: 30px !important;
+  border-radius: 7px !important;
+}
+
+.cc-desktop-editor .cc-timeline-toolbar button:hover:not(:disabled),
+.cc-desktop-editor .cc-timeline-toolbar summary:hover {
+  background: var(--oc-surface-soft) !important;
+}
+
+.cc-desktop-editor .cc-timeline-toolbar button[aria-pressed="true"],
+.cc-desktop-editor .cc-timeline-toolbar button.active {
+  background: var(--oc-coral-soft) !important;
+  color: var(--oc-coral) !important;
+}
+
+.cc-desktop-editor .cc-timeline-timecode {
+  padding: 6px 9px;
+  border: 1px solid var(--oc-line);
+  border-radius: 7px;
+  background: var(--oc-surface-inset);
+  color: var(--oc-text);
+  font-family: "Geist Mono", ui-monospace, monospace;
+  font-size: 11px;
+}
+
+.cc-desktop-editor .cc-timeline-ruler {
+  min-height: 28px !important;
+  border-bottom: 1px solid var(--oc-line) !important;
+  background: var(--oc-surface-inset) !important;
+}
+
+.cc-desktop-editor .cc-track-row {
+  border-bottom: 1px solid rgba(222, 231, 239, 0.07) !important;
+  background: var(--oc-surface) !important;
+}
+
+.cc-desktop-editor .cc-track-head {
+  border-right: 1px solid var(--oc-line) !important;
+  background: var(--oc-surface-raised) !important;
+}
+
+.cc-desktop-editor .cc-track-name {
+  border-radius: 6px !important;
+}
+
+.cc-desktop-editor .cc-timeline-clip {
+  border-radius: 7px !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.13);
+}
+
+.cc-desktop-editor .cc-timeline-clip.is-selected {
+  outline: 2px solid var(--oc-coral) !important;
+  outline-offset: 2px;
+  box-shadow:
+    0 0 0 4px var(--oc-coral-soft),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+.cc-desktop-editor .cc-clip-duration {
+  border-radius: 4px !important;
+  background: rgba(9, 11, 14, 0.7) !important;
+}
+
+.cc-desktop-editor .cc-timeline-hover-guide {
+  width: 2px;
+  background: var(--oc-coral) !important;
+  box-shadow: 0 0 14px rgba(255, 120, 93, 0.55);
+}
+
+/* Resize handles are intentionally quiet until the pointer reaches them. */
+
+.cc-desktop-editor .cc-divider {
+  background: transparent !important;
+}
+
+.cc-desktop-editor .cc-divider:hover {
+  background: rgba(255, 120, 93, 0.55) !important;
+}
+
+@media (max-width: 1320px) {
+  .cc-dashboard-content {
+    padding-inline: 26px !important;
+  }
+
+  .cc-desktop-editor .cc-topbar-actions > .cc-header-btn:nth-of-type(n + 7) {
+    display: none;
+  }
+}
+
+@media (max-width: 1080px) {
+  .cc-dashboard-content {
+    padding-inline: 20px !important;
+  }
+
+  .cc-dashboard-grid {
+    grid-template-columns: repeat(2, minmax(230px, 1fr)) !important;
+  }
+
+  .cc-desktop-editor .cc-library-panel {
+    min-width: 0;
+  }
+
+  .cc-desktop-editor .cc-topbar-title {
+    position: static !important;
+    transform: none !important;
+    margin-left: 6px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cc-dashboard-project-card,
+  button {
+    transition: none !important;
+  }
+}
