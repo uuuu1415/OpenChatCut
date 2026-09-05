@@ -3,7 +3,7 @@ import { useT } from '../i18n/locale';
 import { theme } from '../theme';
 import { Icon } from './icons';
 
-const PROJECT_REPOSITORY_URL = 'https://github.com/0xsline/OpenChatCut';
+const PROJECT_REPOSITORY_URL = 'https://github.com/uuuu1415/OpenChatCut';
 const AUTHOR_EMAIL = 'hl2535771@gmail.com';
 const CONTACT_POPOVER_ID = 'cc-dashboard-contact';
 

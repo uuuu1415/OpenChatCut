@@ -21,7 +21,7 @@ for (const sample of samples) {
       headers: { 'content-type': 'application/json' },
     });
   });
-  assert.equal(requestedUrl, 'https://api.github.com/repos/0xsline/OpenChatCut/releases/latest');
+  assert.equal(requestedUrl, 'https://api.github.com/repos/uuuu1415/OpenChatCut/releases/latest');
   assert.equal(result.latestVersion, sample.tag);
   assert.equal(result.updateAvailable, sample.available, `${sample.current} compared with ${sample.tag}`);
 }

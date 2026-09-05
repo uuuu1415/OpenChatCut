@@ -3,8 +3,8 @@ import type {
   DesktopUpdateState,
 } from '../../shared/desktop-update';
 
-export const UPSTREAM_LATEST_RELEASE_URL = 'https://api.github.com/repos/0xsline/OpenChatCut/releases/latest';
-export const UPSTREAM_RELEASES_URL = 'https://github.com/0xsline/OpenChatCut/releases/latest';
+export const UPSTREAM_LATEST_RELEASE_URL = 'https://api.github.com/repos/uuuu1415/OpenChatCut/releases/latest';
+export const UPSTREAM_RELEASES_URL = 'https://github.com/uuuu1415/OpenChatCut/releases/latest';
 
 export const CURRENT_APP_VERSION =
   typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : '0.0.0';

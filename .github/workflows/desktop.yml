@@ -1,10 +1,13 @@
-# Desktop release workflow. It only runs when manually dispatched.
-# Run it against a branch to build Actions artifacts, or against a v* tag to
-# publish a GitHub Release with installers and SHA-256 checksums.
+# Desktop release workflow. Push a v* tag to build and publish a GitHub Release
+# with installers and SHA-256 checksums. Manual dispatch remains available for
+# producing Actions-only test artifacts from a branch.
 # GitHub automatically adds source archives to every release.
 name: desktop
 
 on:
+  push:
+    tags:
+      - 'v*'
   workflow_dispatch:
 
 permissions:
