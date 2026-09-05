@@ -30,7 +30,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/0xsline/OpenChatCut"><img alt="GitHub Repository" src="https://img.shields.io/badge/GitHub-Repository-181717?style=flat&logo=github" /></a>
+  <a href="https://github.com/uuuu1415/OpenChatCut"><img alt="GitHub Repository" src="https://img.shields.io/badge/GitHub-Repository-181717?style=flat&logo=github" /></a>
   <a href="https://discord.gg/bSGUAeWYkh"><img alt="Discord 社区" src="https://img.shields.io/badge/Discord-Join_Community-5865F2?style=flat&logo=discord&logoColor=white" /></a>
   <img alt="Status" src="https://img.shields.io/badge/status-active_development-FF8A3D?style=flat" />
   <img alt="Local First" src="https://img.shields.io/badge/data-local_first-111827?style=flat" />
@@ -239,7 +239,7 @@ OpenChatCut 是 **开源 ChatCut 替代方案**：把 **对话式 Agent** 和 **
 
 ### 桌面安装包
 
-从 [GitHub Releases](https://github.com/0xsline/OpenChatCut/releases/latest) 下载最新的 macOS、Windows 与 Linux 构建。目前提供 Apple Silicon、Intel Mac 的 DMG、Windows x64 安装包，以及 Linux x64 AppImage。
+从 [GitHub Releases](https://github.com/uuuu1415/OpenChatCut/releases/latest) 下载最新的 macOS、Windows 与 Linux 构建。目前提供 Apple Silicon、Intel Mac 的 DMG、Windows x64 安装包，以及 Linux x64 AppImage。
 
 这些仍是早期构建。macOS 安装包尚未签名和公证，首次启动时可能需要在系统设置中手动允许。
 
@@ -248,18 +248,16 @@ OpenChatCut 是 **开源 ChatCut 替代方案**：把 **对话式 Agent** 和 **
 需要 Node.js 24.x 和 npm。`package.json` 会约束支持的 Node.js 范围，`.nvmrc` 可供 Node 版本管理器直接选择对应主版本。
 
 ```bash
-git clone https://github.com/0xsline/OpenChatCut.git
+git clone https://github.com/uuuu1415/OpenChatCut.git
 cd OpenChatCut
-npm install
+npm ci
 cp .env.example .env.local
-npm run dev
+# Windows PowerShell: Copy-Item .env.example .env.local
+npm run build
+npm run desktop:dev
 ```
 
-打开：
-
-```text
-http://localhost:5199
-```
+桌面窗口会自动打开，无需浏览器地址。
 
 `.env.local` 中只需填写你实际使用的模型或素材服务。没有配置的第三方能力会明确提示缺少对应 Key，不影响本地时间线编辑、内置素材和已配置的其他能力。
 
@@ -291,13 +289,22 @@ http://localhost:5199
 npm run desktop:dev
 ```
 
-桌面端使用 Electron 壳层和同一套内嵌服务，Web 开发版与桌面版共享工程、Agent、生成和导出逻辑。
+桌面端使用 Electron 壳层和同一套内嵌服务，桌面版共享工程、Agent、生成和导出逻辑。
+
+### Fork 版本更新
+
+本 fork 的桌面安装包、版本检查和自动更新统一使用
+[`uuuu1415/OpenChatCut`](https://github.com/uuuu1415/OpenChatCut)。最简单的更新方式是打开应用内的**设置 → 版本 → 检查更新**；发现新版本后点击下载，应用会在重启时安装，工程和本地素材不会被覆盖。
+
+也可以从 [Releases](https://github.com/uuuu1415/OpenChatCut/releases/latest) 手动下载 Windows 安装包，直接覆盖安装旧版本。
+
+发布新版本时，只需修改 `package.json` 与 `package-lock.json` 的版本号，提交后推送匹配的 `v*` 标签，例如 `v0.2.15`。GitHub Actions 会自动构建并发布安装包及更新清单。
 
 ---
 
 ## 项目状态
 
-OpenChatCut 目前处于积极开发阶段，编辑器、工程格式和 Agent 工具仍会持续迭代。预构建的 macOS、Windows 与 Linux 安装包已发布到 [GitHub Releases](https://github.com/0xsline/OpenChatCut/releases)；开发和排障时，从源码运行仍是最透明的方式。
+OpenChatCut 目前处于积极开发阶段，编辑器、工程格式和 Agent 工具仍会持续迭代。预构建的 macOS、Windows 与 Linux 安装包已发布到 [GitHub Releases](https://github.com/uuuu1415/OpenChatCut/releases)；开发和排障时，从源码运行仍是最透明的方式。
 
 基础时间线、本地工程、内置素材和手动编辑不依赖云服务。AI 模型、在线素材、生成、转写等联网能力只在你配置对应服务后启用。
 
@@ -308,7 +315,7 @@ OpenChatCut 目前处于积极开发阶段，编辑器、工程格式和 Agent �
 安装单入口 OpenChatCut Agent Skill：
 
 ```bash
-npx skills add 0xsline/OpenChatCut
+npx skills add uuuu1415/OpenChatCut
 ```
 
 然后对 Agent 说“设置 OpenChatCut”。安装的路由 Skill 会注册本地 MCP
@@ -517,4 +524,5 @@ OpenChatCut 采用 [GNU Affero General Public License v3.0 或更高版本](LICE
 3. 提交前运行 `npm test`、`npm run lint` 和 `npm run build`。
 4. 发起 Pull Request，并附上涉及 UI 或视频行为的截图/验收证据。
 
-问题与功能建议请使用 [GitHub Issues](https://github.com/0xsline/OpenChatCut/issues)。
+问题与功能建议请使用 [GitHub Issues](https://github.com/uuuu1415/OpenChatCut/issues)。
+
