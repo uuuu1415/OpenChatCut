@@ -25,7 +25,7 @@ async function configFor(target: string): Promise<BuilderConfig> {
 const arm64 = await configFor('darwin-arm64');
 assert.deepEqual(arm64.publish, [{
   provider: 'github',
-  owner: '0xsline',
+  owner: 'uuuu1415',
   repo: 'OpenChatCut',
   channel: 'latest-arm64',
 }]);
@@ -320,3 +320,4 @@ assert.ok(
 );
 
 console.log('update-packaging.verify: per-architecture channels and release metadata contract OK');
+
