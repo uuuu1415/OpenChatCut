@@ -57,6 +57,10 @@ export interface ServerRun {
   capabilityVerifier: string;
   requestShapeHash?: string;
   backend: string;
+  /** Native WPF clients execute tool calls inside the local service instead of
+   * waiting for a browser renderer to claim them. This is process-local state
+   * and is intentionally not exposed as a client-controlled capability. */
+  nativeClient?: boolean;
   provider: string;
   model: string;
   askOnly: boolean;

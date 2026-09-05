@@ -63,6 +63,8 @@
     "desktop:dev:shared": "npm run desktop:build:main && electron desktop-dist/main.mjs",
     "desktop:smoke": "npm run desktop:build:main && CC_SMOKE=1 electron desktop-dist/main.mjs",
     "desktop:prebundle": "tsx desktop/prebuild-remotion.mts",
+    "native:build:service": "esbuild desktop/native-service.ts --bundle --platform=node --format=esm --packages=external --loader:.frag=text --sourcemap --outfile=native/runtime/service.mjs",
+    "native:dev": "npm run native:build:service && dotnet run --project native/OpenChatCut.Native/OpenChatCut.Native.csproj",
     "desktop:dist": "npm run build && npm run desktop:build:main && npm run desktop:prebundle && tsx desktop/prepare-target.mts darwin-arm64 && CC_EB_TARGET=darwin-arm64 electron-builder --config config/electron-builder.config.mjs --mac --arm64 --publish never",
     "desktop:prepare": "tsx desktop/prepare-target.mts",
     "desktop:dist:mac-x64": "npm run build && npm run desktop:build:main && npm run desktop:prebundle && tsx desktop/prepare-target.mts darwin-x64 && CC_EB_TARGET=darwin-x64 electron-builder --config config/electron-builder.config.mjs --mac --x64 --publish never",

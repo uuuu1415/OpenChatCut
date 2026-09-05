@@ -103,3 +103,12 @@ public/whisper-cli/
 .npm-cache/
 # Root-level local runtime files
 /etc/
+
+# Native desktop build output
+/native/runtime/
+/native/bin/
+/native/obj/
+/native/publish/
+/native/**/bin/
+/native/**/obj/
+/native/**/publish/

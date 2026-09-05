@@ -37,7 +37,7 @@
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-6-3178C6?style=flat&logo=typescript&logoColor=white" />
   <img alt="React" src="https://img.shields.io/badge/React-19-149ECA?style=flat&logo=react&logoColor=white" />
   <img alt="Remotion" src="https://img.shields.io/badge/Remotion-4-0B84F3?style=flat" />
-  <img alt="Electron" src="https://img.shields.io/badge/Electron-43-47848F?style=flat&logo=electron&logoColor=white" />
+  <img alt="Windows native" src="https://img.shields.io/badge/Windows-Native_WPF-0F6CBD?style=flat&logo=windows&logoColor=white" />
   <img alt="MCP" src="https://img.shields.io/badge/MCP-Agent_native-7C3AED?style=flat" />
 </p>
 
@@ -239,9 +239,9 @@ OpenChatCut 是 **开源 ChatCut 替代方案**：把 **对话式 Agent** 和 **
 
 ### 桌面安装包
 
-从 [GitHub Releases](https://github.com/uuuu1415/OpenChatCut/releases/latest) 下载最新的 macOS、Windows 与 Linux 构建。目前提供 Apple Silicon、Intel Mac 的 DMG、Windows x64 安装包，以及 Linux x64 AppImage。
+从 [Fork 的 Releases](https://github.com/uuuu1415/OpenChatCut/releases) 下载 Windows x64 原生便携包。下载 `OpenChatCut-native-win-x64.zip` 后解压到可写目录，双击 `OpenChatCut.Native.exe` 即可运行；旁边的 `.sha256` 文件可用于校验完整性。
 
-这些仍是早期构建。macOS 安装包尚未签名和公证，首次启动时可能需要在系统设置中手动允许。
+原生 Windows 包是迁移阶段的 prerelease，暂不提供安装器和自动更新。后续更新只需下载最新 Release 并解压到新目录，工程和素材保留在本机共享数据目录中，不会被覆盖。
 
 ### 从源码运行
 
@@ -257,7 +257,7 @@ npm run build
 npm run desktop:dev
 ```
 
-桌面窗口会自动打开，无需浏览器地址。
+Windows 原生窗口会自动打开，无需浏览器地址。
 
 `.env.local` 中只需填写你实际使用的模型或素材服务。没有配置的第三方能力会明确提示缺少对应 Key，不影响本地时间线编辑、内置素材和已配置的其他能力。
 
@@ -278,33 +278,40 @@ npm run desktop:dev
 
 `import_asset` 和 `import_folder` 只访问用户明确选择的本地目录。首次使用时，桌面端会打开系统文件夹选择器；选中的文件夹会被记住，原导入任务随后自动继续。媒体文件会导入素材库；TXT、Markdown、DOCX、PDF 等文稿请作为对话附件添加。
 
-高级或手动配置仍可在 `.env.local` 中填写英文逗号分隔的绝对路径，例如 `AGENT_IMPORT_ROOTS=/Volumes/Media,D:\Projects`。源码运行会读取仓库根目录的文件；桌面安装包会从 Electron 用户数据目录读取：macOS 为 `~/Library/Application Support/OpenChatCut/`，Windows 为 `%APPDATA%\OpenChatCut\`，Linux 为 `$XDG_CONFIG_HOME/OpenChatCut/`（通常是 `~/.config/OpenChatCut/`）。修改后请重启应用。
+高级或手动配置仍可在 `.env.local` 中填写英文逗号分隔的绝对路径，例如 `AGENT_IMPORT_ROOTS=/Volumes/Media,D:\Projects`。源码运行会读取仓库根目录的文件；Windows 原生客户端和本地服务沿用 `~/.openchatcut/` 作为共享数据目录（Windows 通常对应 `%USERPROFILE%\.openchatcut\`）。修改后请重启应用。
 
 
 本地 H.264 导出会在 macOS 上优先使用 VideoToolbox，在兼容的 Windows 设备上优先使用 NVENC，失败时自动回退软件编码。可用 `OPENCHATCUT_RENDER_CONCURRENCY` 和 `OPENCHATCUT_MAX_ACTIVE_EXPORTS` 调整渲染并发及重型导出上限，用 `OPENCHATCUT_DISABLE_HARDWARE_ENCODING` 关闭硬件编码，或用 `OPENCHATCUT_H264_ENCODER` 覆盖 FFmpeg 侧的编码器选择；详见 [`.env.example`](.env.example)。
 
-### 桌面端开发
+### Windows 原生桌面端开发
 
 ```bash
-npm run desktop:dev
+npm run native:dev
 ```
 
-桌面端使用 Electron 壳层和同一套内嵌服务，桌面版共享工程、Agent、生成和导出逻辑。
+该命令启动 WPF 原生窗口和无界面的本地 Node 服务。窗口本身不创建浏览器、WebView 或 Electron 运行时；工程、Agent、素材、渲染和导出仍由同一套本地服务和 EditorCore 提供。
+
+仓库中的 `npm run desktop:dev` 仅保留给迁移期间的旧版兼容回归，不参与原生 Release。
 
 ### Fork 版本更新
 
-本 fork 的桌面安装包、版本检查和自动更新统一使用
-[`uuuu1415/OpenChatCut`](https://github.com/uuuu1415/OpenChatCut)。最简单的更新方式是打开应用内的**设置 → 版本 → 检查更新**；发现新版本后点击下载，应用会在重启时安装，工程和本地素材不会被覆盖。
+本 fork 的原生 Windows 发布统一使用
+[`uuuu1415/OpenChatCut`](https://github.com/uuuu1415/OpenChatCut)。最简单的更新方式是打开
+[Releases](https://github.com/uuuu1415/OpenChatCut/releases)，下载最新的
+`OpenChatCut-native-win-x64.zip`，解压到新目录后运行 `OpenChatCut.Native.exe`。
+不需要 Git、不需要安装器，也不会触碰 `~/.openchatcut/` 中的工程和素材。
 
-也可以从 [Releases](https://github.com/uuuu1415/OpenChatCut/releases/latest) 手动下载 Windows 安装包，直接覆盖安装旧版本。
-
-发布新版本时，只需修改 `package.json` 与 `package-lock.json` 的版本号，提交后推送匹配的 `v*` 标签，例如 `v0.2.15`。GitHub Actions 会自动构建并发布安装包及更新清单。
+维护者发布新版本时，提交代码后推送匹配的 `v*` 标签，例如 `v0.3.0-native.2`。
+GitHub Actions 会自动构建 WPF 原生便携包并发布 ZIP 与 SHA-256 校验文件；旧版 Electron
+兼容构建不会因标签自动发布。
 
 ---
 
 ## 项目状态
 
-OpenChatCut 目前处于积极开发阶段，编辑器、工程格式和 Agent 工具仍会持续迭代。预构建的 macOS、Windows 与 Linux 安装包已发布到 [GitHub Releases](https://github.com/uuuu1415/OpenChatCut/releases)；开发和排障时，从源码运行仍是最透明的方式。
+OpenChatCut 目前处于积极开发阶段，编辑器、工程格式和 Agent 工具仍会持续迭代。
+Windows 原生客户端正在通过功能闸门逐步替换旧版桌面壳层；原生 Release 会明确标记为 prerelease，
+直到工程、时间线、素材、Agent、预览和导出等流程全部完成原生覆盖。开发和排障时，从源码运行仍是最透明的方式。
 
 基础时间线、本地工程、内置素材和手动编辑不依赖云服务。AI 模型、在线素材、生成、转写等联网能力只在你配置对应服务后启用。
 
@@ -406,9 +413,9 @@ OPENCHATCUT_EDITOR_URL=https://your-editor.example.com
 | 编辑核心 | 不可变时间线状态、命令层、提案式应用 |
 | Agent | Vercel AI SDK 7（Anthropic、OpenAI、Gemini、Kimi、Qwen、GLM、DeepSeek、MiniMax、小米 MiMo、Mistral、xAI Grok（API Key 或 SuperGrok/X Premium+ 订阅登录）、OpenRouter、OrcaRouter 与兼容接口）、Agent Skills、MCP SDK |
 | 预览与视觉 | Remotion Player、WebGL / GLSL |
-| 服务端 | Vite / Electron 双宿主插件、服务端密钥仓 |
+| 本地服务 | Node.js 无界面服务、服务端密钥仓、MCP、AI、素材与导出插件 |
 | 持久化 | `~/.openchatcut` 下的本机共享工程库、IndexedDB 缓存、可配置本地素材目录、可选 Cloudflare R2 |
-| 桌面端 | Electron 43 |
+| 桌面端 | Windows 原生 WPF（.NET 8），无 Electron / WebView |
 | 导出 | Remotion、FFmpeg、FCPXML、SRT |
 
 ### 目录速览
@@ -424,7 +431,8 @@ OPENCHATCUT_EDITOR_URL=https://your-editor.example.com
 | `src/generate/` | 图片、视频、语音、音乐和音效生成客户端 |
 | `src/persist/` | 工程、聊天、版本和媒体持久化 |
 | `server/plugins/` | 生成、转写、素材、导出和存储服务 |
-| `desktop/` | Electron 主进程与内嵌服务 |
+| `desktop/` | 迁移期间的旧版兼容宿主（不参与原生 Release） |
+| `native/` | Windows 原生 WPF 客户端、发布工程与原生服务启动器 |
 | `remotion/` | 无头渲染和导出管线 |
 
 ---
@@ -492,7 +500,7 @@ OpenChatCut 基于以下核心项目与规范构建：
 
 ## 更新日志
 
-重要变更见中英双语的 [`CHANGELOG.md`](CHANGELOG.md)，所有已发布安装包与源码包见 [GitHub Releases](https://github.com/0xsline/OpenChatCut/releases)。
+重要变更见中英双语的 [`CHANGELOG.md`](CHANGELOG.md)，所有已发布原生包与源码包见 [Fork 的 GitHub Releases](https://github.com/uuuu1415/OpenChatCut/releases)。
 
 ---
 

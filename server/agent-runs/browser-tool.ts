@@ -1,8 +1,12 @@
 import { jsonSchema, tool } from 'ai';
+import type { AgentContext } from '../../src/agent/context';
 import { policyForTool } from '../../src/agent/execution-policy';
+import { makeDraft } from '../../src/editor/store';
 import { ToolActivation } from '../../src/agent/tool-activation';
 import type { AgentToolSchema } from '../../src/agent/tool-schema';
 import { toolResultModelOutput } from '../../src/agent/tool-result-output';
+import { executeCodexTool } from '../../src/agent/runtime';
+import { loadAgentSettings } from '../../src/agent/settings/agentSettings';
 import {
   isFailedToolResult,
   toolFailureReason,
@@ -17,6 +21,13 @@ import {
   waitForToolResult,
   type ServerRun,
 } from './store';
+import {
+  getStoredEntry,
+  withSerializedProjectStore,
+} from '../plugins/project-store';
+import { runProjectMigrations } from '../../src/persist/migrations/index';
+import { revisionOf } from '../../src/agent/external-edit-session';
+import type { ProjectDoc } from '../../src/editor/types';
 
 export interface ActivationState {
   current: ToolActivation;
@@ -37,6 +48,78 @@ function recordTool(activation: ActivationState, schema: AgentToolSchema, args: 
     activation.acceptance,
     policyForTool(schema.name, args).effect,
   );
+}
+
+function migratedDocument(value: unknown): ProjectDoc {
+  const migrated = runProjectMigrations(value);
+  if (!migrated) throw new Error('native Agent could not read the current project document');
+  return migrated.doc;
+}
+
+async function commitNativeDocument(
+  projectId: string,
+  base: ProjectDoc,
+  next: ProjectDoc,
+): Promise<void> {
+  const baseRevision = revisionOf(base);
+  await withSerializedProjectStore(async (store) => {
+    const currentEntry = await store.readEntry(`project:${projectId}`);
+    if (!currentEntry.found) throw new Error('native Agent project no longer exists');
+    const current = migratedDocument(currentEntry.value);
+    if (revisionOf(current) !== baseRevision) {
+      throw new Error('project changed while the native Agent was editing; refresh and retry');
+    }
+    await store.writeEntryExact(`project:${projectId}`, next);
+
+    const index = await store.readEntry('projects');
+    if (!Array.isArray(index.value)) return;
+    const entries = index.value.map((item) => {
+      if (!item || typeof item !== 'object' || Array.isArray(item)) return item;
+      const record = item as Record<string, unknown>;
+      return record.id === projectId ? { ...record, updatedAt: Date.now() } : item;
+    });
+    await store.writeEntry('projects', entries);
+  });
+}
+
+async function executeNativeTool(
+  run: ServerRun,
+  schema: AgentToolSchema,
+  args: Record<string, unknown>,
+  toolCallId: string,
+  activation: ActivationState,
+): Promise<{ result: unknown; activation: ToolActivation }> {
+  const stored = await getStoredEntry(`project:${run.projectId}`);
+  if (!stored.found) throw new Error('native Agent project no longer exists');
+  const base = migratedDocument(stored.value);
+  const draft = makeDraft(base);
+  const context: AgentContext = {
+    commands: draft.commands,
+    getState: draft.getState,
+    getDoc: draft.getDoc,
+    getCreativeMode: () => null,
+    templates: [],
+    audio: [],
+    getProjectId: () => run.projectId,
+    onToolProgress: (note) => pushRunEvent(run, 'tool-progress', { toolCallId, note }),
+  };
+  const update = await executeCodexTool({
+    name: schema.name,
+    args,
+    activation: activation.current,
+    ctx: context,
+    settings: loadAgentSettings(),
+    toolCallId,
+    signal: run.abort?.signal,
+    onEvent: () => undefined,
+  });
+  if (!update.execution.success) {
+    throw new Error(typeof update.execution.result === 'string'
+      ? update.execution.result
+      : JSON.stringify(update.execution.result));
+  }
+  await commitNativeDocument(run.projectId, base, draft.getDoc());
+  return { result: update.execution.result, activation: update.activation };
 }
 
 export async function executeBrowserTool(
@@ -72,6 +155,14 @@ export async function executeBrowserTool(
     activation.repeatGuardNote = undefined;
     activation.lastSuccessfulPureTool = undefined;
     pushRunEvent(run, 'tool-request', { toolCallId, name: schema.name, args, argsDigest });
+    if (run.nativeClient) {
+      const native = await executeNativeTool(run, schema, args, toolCallId, activation);
+      const shaped = native.activation.withToolResult(schema.name, native.result);
+      activation.current = shaped.activation;
+      activation.toolFailures.record(schema.name, { success: true, result: shaped.result });
+      recordTool(activation, schema, args);
+      return shaped.result;
+    }
     const delivered = await waitForToolResult(run, toolCallId, schema.name, argsDigest);
     const followup = delivered && typeof delivered === 'object'
       && '__followup' in delivered && typeof delivered.__followup === 'string'

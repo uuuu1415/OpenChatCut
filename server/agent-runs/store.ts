@@ -148,6 +148,7 @@ export interface CreateServerRunInput {
   readonly projectId: string;
   readonly sessionGeneration: string;
   readonly backend?: string;
+  readonly nativeClient?: boolean;
   readonly provider: string;
   readonly model: string;
   readonly askOnly?: boolean;
@@ -193,6 +194,7 @@ function createRunRecord(
     capabilityVerifier,
     requestShapeHash: digest,
     backend: input.backend ?? 'api',
+    ...(input.nativeClient ? { nativeClient: true } : {}),
     provider: input.provider,
     model: input.model,
     askOnly: input.askOnly === true,

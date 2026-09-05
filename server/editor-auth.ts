@@ -5,6 +5,7 @@ import type { EditorBootstrapInfo } from '../shared/editor-auth-transport.ts';
 import { isLoopbackAddress } from './loopback-address.ts';
 import { loadOrCreateMcpToken } from './mcp-token.ts';
 import { runtimeProfile } from './runtime-profile.ts';
+import { nativeDesktopAuthorized } from './native-auth.ts';
 
 export const EDITOR_BOOTSTRAP_HEADER = 'x-openchatcut-editor-bootstrap';
 
@@ -83,6 +84,7 @@ function requestEditorOrigin(req: IncomingMessage): string | null {
 }
 
 export function trustedEditorRequest(req: IncomingMessage, requireOrigin: boolean): boolean {
+  if (nativeDesktopAuthorized(req)) return true;
   if (!isLoopbackAddress(req.socket.remoteAddress)) return false;
   const expected = requestEditorOrigin(req);
   if (!expected) return false;

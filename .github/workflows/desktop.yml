@@ -1,13 +1,11 @@
-# Desktop release workflow. Push a v* tag to build and publish a GitHub Release
-# with installers and SHA-256 checksums. Manual dispatch remains available for
-# producing Actions-only test artifacts from a branch.
-# GitHub automatically adds source archives to every release.
+# Legacy Electron packaging workflow.
+#
+# Native releases are built by native-desktop.yml. This workflow is retained as
+# a manual compatibility check while the native parity migration is in flight;
+# it must not publish an Electron package when a version tag is pushed.
 name: desktop
 
 on:
-  push:
-    tags:
-      - 'v*'
   workflow_dispatch:
 
 permissions:

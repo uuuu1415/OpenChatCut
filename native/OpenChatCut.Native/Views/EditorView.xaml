@@ -1,0 +1,200 @@
+<UserControl x:Class="OpenChatCut.Native.Views.EditorView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="{StaticResource WindowBrush}">
+  <Grid Margin="18,14,18,16">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="48" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="254" />
+    </Grid.RowDefinitions>
+
+    <Grid Grid.Row="0">
+      <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+        <Button Content="← 工程" Style="{StaticResource QuietButton}" Command="{Binding BackCommand}" Margin="0,0,14,0" />
+        <StackPanel VerticalAlignment="Center">
+          <TextBlock Text="{Binding ProjectName}" FontSize="16" FontWeight="SemiBold" />
+          <TextBlock Text="{Binding TimelineName}" Foreground="{StaticResource MutedBrush}" FontSize="10" Margin="0,2,0,0" />
+        </StackPanel>
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+        <TextBlock Text="{Binding CanvasLabel}" Foreground="{StaticResource MutedBrush}" FontSize="11" VerticalAlignment="Center" Margin="0,0,18,0" />
+        <Button Content="撤销" Style="{StaticResource QuietButton}" Command="{Binding UndoCommand}" Margin="0,0,6,0" />
+        <Button Content="重做" Style="{StaticResource QuietButton}" Command="{Binding RedoCommand}" Margin="0,0,6,0" />
+        <Button Content="同步" Style="{StaticResource QuietButton}" Command="{Binding RefreshCommand}" />
+      </StackPanel>
+    </Grid>
+
+    <Grid Grid.Row="1" Margin="0,10,0,14">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="268" />
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="286" />
+      </Grid.ColumnDefinitions>
+
+      <Border Grid.Column="0" Background="{StaticResource PanelBrush}" BorderBrush="{StaticResource LineBrush}" BorderThickness="1" CornerRadius="11" Padding="16" Margin="0,0,12,0">
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+          </Grid.RowDefinitions>
+          <StackPanel>
+            <StackPanel Orientation="Horizontal">
+              <TextBlock Text="AI 工作台" FontSize="15" FontWeight="SemiBold" />
+              <Border Background="#1D382F" CornerRadius="4" Padding="6,3" Margin="8,0,0,0">
+                <TextBlock Text="LOCAL" Foreground="{StaticResource GreenBrush}" FontSize="9" FontWeight="Bold" />
+              </Border>
+            </StackPanel>
+            <TextBlock Text="用自然语言描述剪辑目标，Agent 会生成可检查的编辑。" Foreground="{StaticResource MutedBrush}" FontSize="11" TextWrapping="Wrap" Margin="0,7,0,0" />
+            <TextBlock Text="{Binding Status}" Foreground="{StaticResource GreenBrush}" FontSize="10" TextWrapping="Wrap" Margin="0,7,0,0" />
+          </StackPanel>
+          <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,16,0,12">
+            <ItemsControl ItemsSource="{Binding Messages}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Border Background="#171F2D" BorderBrush="{StaticResource LineBrush}" BorderThickness="1" CornerRadius="7" Padding="10" Margin="0,0,0,8">
+                    <TextBlock Text="{Binding}" Foreground="{StaticResource MutedBrush}" FontSize="11" TextWrapping="Wrap" />
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </ScrollViewer>
+          <StackPanel Grid.Row="2">
+            <TextBox Text="{Binding Prompt, UpdateSourceTrigger=PropertyChanged}" Height="68" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" />
+            <Grid Margin="0,8,0,0">
+              <TextBlock Text="Enter 发送 · Shift+Enter 换行" Foreground="{StaticResource MutedBrush}" FontSize="10" VerticalAlignment="Center" />
+              <Button Content="发送" Style="{StaticResource PrimaryButton}" HorizontalAlignment="Right" Command="{Binding SendCommand}" />
+            </Grid>
+          </StackPanel>
+        </Grid>
+      </Border>
+
+      <Border Grid.Column="1" Background="#080B11" BorderBrush="{StaticResource LineBrush}" BorderThickness="1" CornerRadius="11" Padding="18" Margin="0,0,12,0">
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+          </Grid.RowDefinitions>
+          <Border HorizontalAlignment="Center" VerticalAlignment="Center" Width="570" Height="316" CornerRadius="8" BorderBrush="#2A3950" BorderThickness="1">
+            <Border.Background>
+              <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#162238" Offset="0" />
+                <GradientStop Color="#0E111B" Offset="0.56" />
+                <GradientStop Color="#2A1722" Offset="1" />
+              </LinearGradientBrush>
+            </Border.Background>
+            <Grid>
+              <Ellipse Width="210" Height="210" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="50,35,0,0" Opacity="0.35">
+                <Ellipse.Fill>
+                  <RadialGradientBrush>
+                    <GradientStop Color="#62B5FF" Offset="0" />
+                    <GradientStop Color="#23304A" Offset="1" />
+                  </RadialGradientBrush>
+                </Ellipse.Fill>
+              </Ellipse>
+              <Ellipse Width="180" Height="180" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,62,28" Opacity="0.32">
+                <Ellipse.Fill>
+                  <RadialGradientBrush>
+                    <GradientStop Color="#FF765F" Offset="0" />
+                    <GradientStop Color="#2A1722" Offset="1" />
+                  </RadialGradientBrush>
+                </Ellipse.Fill>
+              </Ellipse>
+              <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Text="OPENCHATCUT" Foreground="#D9E5F2" FontSize="11" FontWeight="Bold" HorizontalAlignment="Center" />
+                <TextBlock Text="Native preview surface" Foreground="#7F91AA" FontSize="12" HorizontalAlignment="Center" Margin="0,8,0,0" />
+                <TextBlock Text="{Binding DurationLabel}" Foreground="{StaticResource CoralBrush}" FontSize="11" HorizontalAlignment="Center" Margin="0,14,0,0" />
+              </StackPanel>
+            </Grid>
+          </Border>
+          <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,14,0,0">
+            <Button Content="▶" Style="{StaticResource PrimaryButton}" Width="44" Padding="0,8" />
+            <Button Content="适配画布" Style="{StaticResource QuietButton}" Margin="8,0,0,0" />
+            <TextBlock Text="GPU composition · native canvas" Foreground="{StaticResource MutedBrush}" FontSize="10" VerticalAlignment="Center" Margin="14,0,0,0" />
+          </StackPanel>
+        </Grid>
+      </Border>
+
+      <Border Grid.Column="2" Background="{StaticResource PanelBrush}" BorderBrush="{StaticResource LineBrush}" BorderThickness="1" CornerRadius="11" Padding="16">
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+          </Grid.RowDefinitions>
+          <StackPanel Orientation="Horizontal">
+            <TextBlock Text="检查器" FontSize="15" FontWeight="SemiBold" />
+            <TextBlock Text="  CLIP" Foreground="{StaticResource MutedBrush}" FontSize="10" VerticalAlignment="Center" />
+          </StackPanel>
+          <StackPanel Grid.Row="1" Margin="0,22,0,0">
+            <TextBlock Text="名称" Foreground="{StaticResource MutedBrush}" FontSize="10" />
+            <TextBlock Text="{Binding InspectorTitle}" FontSize="13" FontWeight="SemiBold" Margin="0,5,0,18" TextTrimming="CharacterEllipsis" />
+            <TextBlock Text="类型" Foreground="{StaticResource MutedBrush}" FontSize="10" />
+            <TextBlock Text="{Binding InspectorKind}" Foreground="{StaticResource BlueBrush}" FontSize="12" Margin="0,5,0,18" />
+            <TextBlock Text="时间" Foreground="{StaticResource MutedBrush}" FontSize="10" />
+            <TextBlock Text="{Binding InspectorTiming}" FontSize="12" Margin="0,5,0,0" />
+            <Button Content="切分片段" Style="{StaticResource QuietButton}" Command="{Binding SplitCommand}" Margin="0,24,0,0" HorizontalAlignment="Left" />
+          </StackPanel>
+          <TextBlock Grid.Row="2" Text="选择片段后可继续调整变换、音量、字幕与特效。" Foreground="{StaticResource MutedBrush}" FontSize="10" TextWrapping="Wrap" />
+        </Grid>
+      </Border>
+    </Grid>
+
+    <Border Grid.Row="2" Background="{StaticResource PanelBrush}" BorderBrush="{StaticResource LineBrush}" BorderThickness="1" CornerRadius="11" Padding="12,10">
+      <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="24" />
+          <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid>
+          <TextBlock Text="时间线" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" />
+          <TextBlock Text="{Binding DurationLabel}" Foreground="{StaticResource MutedBrush}" FontSize="10" HorizontalAlignment="Right" VerticalAlignment="Center" />
+        </Grid>
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Margin="0,8,0,0">
+          <ItemsControl ItemsSource="{Binding Tracks}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Grid Height="55" Margin="0,0,0,5">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="64" />
+                    <ColumnDefinition Width="*" />
+                  </Grid.ColumnDefinitions>
+                  <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding Label}" Foreground="{StaticResource BlueBrush}" FontSize="11" FontWeight="Bold" />
+                    <TextBlock Text="{Binding Kind}" Foreground="{StaticResource MutedBrush}" FontSize="9" Margin="0,2,0,0" />
+                  </StackPanel>
+                  <Border Grid.Column="1" Background="#0C111A" BorderBrush="{StaticResource LineBrush}" BorderThickness="1" CornerRadius="6" Padding="5">
+                    <ItemsControl ItemsSource="{Binding Clips}">
+                      <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                          <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                      </ItemsControl.ItemsPanel>
+                      <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                          <Button Command="{Binding DataContext.SelectClipCommand, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" CommandParameter="{Binding}" Background="Transparent" BorderThickness="0" Padding="0" Margin="0,0,5,0">
+                            <Border Width="132" Height="43" Background="#23334B" BorderBrush="#35547C" BorderThickness="1" CornerRadius="5" Padding="8,5">
+                              <Grid>
+                                <TextBlock Text="{Binding Name}" FontSize="10" TextTrimming="CharacterEllipsis" VerticalAlignment="Top" />
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom">
+                                  <TextBlock Text="{Binding KindLabel}" Foreground="{StaticResource BlueBrush}" FontSize="8" FontWeight="Bold" />
+                                  <TextBlock Text="  " Foreground="{StaticResource MutedBrush}" FontSize="8" />
+                                  <TextBlock Text="{Binding DurationLabel}" Foreground="{StaticResource MutedBrush}" FontSize="8" />
+                                </StackPanel>
+                              </Grid>
+                            </Border>
+                          </Button>
+                        </DataTemplate>
+                      </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                  </Border>
+                </Grid>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+      </Grid>
+    </Border>
+  </Grid>
+</UserControl>

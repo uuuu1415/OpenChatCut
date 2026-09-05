@@ -1,6 +1,7 @@
 import type { IncomingMessage } from 'node:http';
 import { runtimeProfile, type RuntimeProfile } from './runtime-profile.ts';
 import { isLoopbackAddress } from './loopback-address.ts';
+import { nativeDesktopAuthorized } from './native-auth.ts';
 
 /**
  * Local-device trust model (no shared secrets).
@@ -67,12 +68,12 @@ function browserEnforcedRequest(req: IncomingMessage): boolean {
 /** Read-only access: loopback requests from same-origin pages (or direct
  *  local navigation) may read the active runtime profile's project library. */
 export function projectStoreReadAuthorized(req: IncomingMessage): boolean {
-  return trustedLoopback(req) && browserEnforcedRequest(req);
+  return nativeDesktopAuthorized(req) || (trustedLoopback(req) && browserEnforcedRequest(req));
 }
 
 /** Write access: loopback, same-origin, browser-enforced requests only. */
 export function projectStoreHttpAuthorized(req: IncomingMessage): boolean {
-  return trustedLoopback(req) && browserEnforcedRequest(req) && sameOrigin(req);
+  return nativeDesktopAuthorized(req) || (trustedLoopback(req) && browserEnforcedRequest(req) && sameOrigin(req));
 }
 
 export function resetProjectStoreHttpAuthForTests(): void {

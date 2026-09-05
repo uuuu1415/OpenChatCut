@@ -1,9 +1,10 @@
-// Electron embedded production server: a 127.0.0.1 HTTP server provides the same full stack as dev —
+// Local production service: a 127.0.0.1 HTTP server provides the same full stack as dev —
 // ① seedKeystore(.env.local, cwd semantics are consistent with dev; the packaged version is main first chdir userData)
 // ② /llm is mounted by the shared server plugin, /assemblyai injects the key here
 // ③ Zero modification and mounting of server plugin (the measured dependency is only middlewares.use + config.logger)
 // ④ /media/uploads Direct reading of assets at runtime + dist/ static cover (desktop/static-files.ts)
-// The key still only lives in this process; the rendering process (BrowserWindow) only sees the same-origin HTTP API.
+// The key still only lives in this process. The native WPF client talks to it through
+// an authenticated loopback contract; the legacy Electron renderer is migration-only.
 import { readFile } from 'node:fs/promises';
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from 'node:http';
 import { resolve } from 'node:path';
@@ -17,6 +18,7 @@ import { createMiniConnect, type MiniConnect } from './mini-connect.ts';
 import { listenWithAffinity } from './embedded-port.ts';
 import { runtimeProfile } from '../server/runtime-profile.ts';
 import { distStaticMiddleware, uploadsMiddleware } from './static-files.ts';
+import { mountNativeDesktopApi } from './native-desktop-api.ts';
 
 export interface EmbeddedServer {
   server: Server;
@@ -77,6 +79,11 @@ export async function startEmbeddedServer(distDir: string): Promise<EmbeddedServ
     console.error('[embedded-server]', err instanceof Error ? err.message : err);
   });
   const server = createServer((req, res) => app.handle(req, res));
+
+  // The native client uses an authenticated loopback contract instead of a
+  // BrowserWindow/WebView bridge. Electron can still start this server during
+  // the migration, but the shipped native client is the intended consumer.
+  mountNativeDesktopApi(app);
 
   // Authorize the renderer request before the proxy can inject the provider key.
   mountAssemblyAiProxy(app);

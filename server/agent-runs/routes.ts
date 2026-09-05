@@ -44,6 +44,7 @@ import {
 } from './request';
 import { CursorProtocolError, resolveCursor, sseForRun } from './sse';
 import { projectStoreHttpAuthorized, projectStoreReadAuthorized } from '../project-store-http-auth';
+import { nativeDesktopAuthorized } from '../native-auth.ts';
 const MAX_TOOL_RESULT_BODY_BYTES = 1024 * 1024;
 const SERVER_RUN_CAPABILITY_HEADER = 'x-openchatcut-run-capability';
 const SERVER_RUN_ADMISSION_TIMEOUT_MS = 60_000;
@@ -244,6 +245,7 @@ async function handleCreate(req: IncomingMessage, res: ServerResponse): Promise<
     projectId: input.projectId,
     sessionGeneration,
     backend,
+    nativeClient: nativeDesktopAuthorized(req),
     provider: effectiveProvider,
     model: effectiveModel,
     askOnly,
